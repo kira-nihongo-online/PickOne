@@ -108,7 +108,6 @@
   <label>表示までの秒数：<input type="number" id="delayName" value="0" min="0"></label>
   <button id="drawBtn" onclick="drawName()">抽選する</button>
   <button onclick="clearHistory()">履歴をクリア</button>
-　<button onclick="testDataConnection()">データ接続テスト</button>
 
   <div id="result"></div>
   <ul id="history"></ul>
@@ -117,7 +116,9 @@
 
     const DATA_URL = 'https://script.google.com/macros/s/AKfycbwye_JuuU9AppUZtOHbxAZw41ROsUfhlF1BghxxnvNUS0ObWAg8MkbI7iXN1IsayFjb/exec';
 
-    async function testDataConnection() {
+    const DATA_URL = 'https://script.google.com/macros/s/AKfycbwye_JuuU9AppUZtOHbxAZw41ROsUfhlF1BghxxnvNUS0ObWAg8MkbI7iXN1IsayFjb/exec';
+
+    async function loadNamesFromSheet() {
       try {
         const response = await fetch(DATA_URL);
 
@@ -127,16 +128,18 @@
 
         const data = await response.json();
 
-        console.log('PickOne JSON:', data);
-        alert('JSON取得成功！\n\n' + JSON.stringify(data, null, 2));
+        document.getElementById("nameList").value =
+          data.names.join("\n");
 
       } catch (error) {
-        console.error(error);
-        alert('JSON取得失敗\n\n' + error);
+        console.error('JSON取得失敗:', error);
+        alert('出席者データの取得に失敗しました。');
       }
     }
 
     let usedNames = [];
+
+    window.addEventListener('load', loadNamesFromSheet);
 
     function drawName() {
       const allNames = document.getElementById("nameList").value
