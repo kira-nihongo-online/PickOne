@@ -135,6 +135,22 @@
       }
     }
 
+    let voiceJP = null;
+
+    function loadVoices() {
+      const voices = speechSynthesis.getVoices();
+
+      voiceJP =
+        voices.find(v => v.name.includes("七海")) ||
+        voices.find(v => v.name.includes("Nanami")) ||
+        voices.find(v => v.lang === "ja-JP");
+
+      console.log("選択音声:", voiceJP?.name);
+    }
+
+    speechSynthesis.onvoiceschanged = loadVoices;
+    loadVoices();
+
     let usedNames = [];
 
     window.addEventListener('load', loadNamesFromSheet);
@@ -181,7 +197,17 @@
         history.appendChild(li);
 
         const utterance = new SpeechSynthesisUtterance(`抽選結果は ${result} です`);
+
         utterance.lang = "ja-JP";
+
+        if (voiceJP) {
+          utterance.voice = voiceJP;
+        }
+
+        utterance.rate = 1.0;
+        utterance.pitch = 1.0;
+
+        speechSynthesis.cancel();
         speechSynthesis.speak(utterance);
       }, delay);
     }
